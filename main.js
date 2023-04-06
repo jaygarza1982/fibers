@@ -7,6 +7,10 @@ var time = 0;
 var particles = [];
 var flowfield;
 
+var hueNum = 0;
+var hueInc = 1;
+var framesNum = 0;
+
 function setup() {
        createCanvas(windowWidth, windowHeight);
 
@@ -18,7 +22,7 @@ function setup() {
 
 function draw() { // Rotating Vectors
        // background(255,100);
-       background('rgba(0,0,0,0.25)');
+       background('rgba(0, 0, 0, 0.25)');
        
        FlowField();
 
@@ -30,6 +34,16 @@ function draw() { // Rotating Vectors
               particles[k].edge();
               particles[k].follow(flowfield);
        }
+
+       hueNum += hueInc;
+
+       hueNum = hueNum % 100;
+
+       console.log('hue', hueNum);
+
+       save(`frame-${framesNum.toString().padStart(9, '0')}`);
+
+       framesNum++;
 }
 
 function FlowField(){
@@ -89,7 +103,9 @@ function Particle() {
        }
 
        this.show = function() {
-              fill(255,255,255,1);
+              const newColor = color(`hsl(${parseInt(hueNum)}, 100%, 50%)`);
+              fill(newColor);
+              // fill(255,255,255,1);
               noStroke();
               ellipse(this.pos.x, this.pos.y, 3, 3);
        }
