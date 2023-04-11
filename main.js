@@ -2,31 +2,36 @@
 
 var scl = 5;
 var xvec, yvec;
-var noiseInc = 0.03;
+// var noiseInc = 0.1;
+var noiseInc = 0.05;
+// var noiseInc = 0.03;
 var time = 0;
 var particles = [];
 var flowfield;
 
 var hueNum = 0;
-var hueInc = 1;
+var hueInc = 0.25;
 var framesNum = 0;
 
 function setup() {
+  frameRate(30);
+  colorMode(HSB, 100);
        createCanvas(windowWidth, windowHeight);
 
-       for (var i = 0; i < 1000; i++) {
+       const count = 10000;
+       for (var i = 0; i < count; i++) {
               particles[i] = new Particle();
        }
+
+       background('rgba(0, 0, 0, 1)');
 
 }
 
 function draw() { // Rotating Vectors
-       // background(255,100);
-       background('rgba(0, 0, 0, 0.25)');
+      //  background('rgba(0, 0, 0, 0.25)');
+      //  background('rgba(0, 0, 0, 1)');
        
        FlowField();
-
-  // console.log('Noise inc', noiseInc);
 
        for (var k = 0; k < particles.length; k++) {
               particles[k].show();
@@ -36,14 +41,13 @@ function draw() { // Rotating Vectors
        }
 
        hueNum += hueInc;
+       hueNum = hueNum % 360;
 
-       hueNum = hueNum % 100;
+      //  console.log('hue', hueNum);
 
-       console.log('hue', hueNum);
+      //  save(`frame-${framesNum.toString().padStart(9, '0')}`);
 
-       save(`frame-${framesNum.toString().padStart(9, '0')}`);
-
-       framesNum++;
+      //  framesNum++;
 }
 
 function FlowField(){
@@ -62,15 +66,16 @@ function FlowField(){
                      flowfield[index] = dir;
                      dir.setMag(3);
                      xNoise += noiseInc;
-                     // stroke(180);
-                     // push();
-                     // translate(x * scl, y * scl);
-                     // rotate(dir.heading());
-                     // line(0, 0, scl, 0);
-                     // pop();
+                    //  stroke(180);
+                    //  push();
+                    //  translate((x * scl) * 8, (y * scl) * 8);
+                    //  rotate(dir.heading());
+                    //  line(0, 0, scl, 0);
+                    //  pop();
               }
               yNoise += noiseInc;
-              time += .000001;
+              time += .00001;
+              // time += .000001;
        }
 }
 
@@ -78,12 +83,14 @@ function Particle() {
        this.x = random(width);
        this.y = random(height);
        this.pos = createVector(this.x, this.y);
+       this.oldPos = createVector(this.x, this.y);
        this.vel = createVector(0, 0);
        this.acc = createVector(0, 0);
        this.r = 2.0;
        this.maxspeed = 1;
 
        this.update = function() {
+              this.oldPos = createVector(this.pos.x, this.pos.y);
               this.pos.add(this.vel);
               this.vel.add(this.acc);
               this.acc.mult(0);
@@ -103,11 +110,14 @@ function Particle() {
        }
 
        this.show = function() {
-              const newColor = color(`hsl(${parseInt(hueNum)}, 100%, 50%)`);
+              const colorStr = `hsla(${parseInt(hueNum)}, 100%, 50%, 0.25)`;
+              const newColor = color(colorStr);
               fill(newColor);
-              // fill(255,255,255,1);
+
               noStroke();
-              ellipse(this.pos.x, this.pos.y, 3, 3);
+              ellipse(this.pos.x, this.pos.y, 1, 1);
+
+              line(this.pos.x, this.pos.y, this.oldPos.x, this.oldPos.y);
        }
 
        this.edge = function() {
