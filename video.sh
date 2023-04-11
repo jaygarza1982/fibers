@@ -1,1 +1,1 @@
-ffmpeg -framerate 30 -pattern_type glob -i '/home/jake/Desktop/video-test/*.png' -c:v libx264 -pix_fmt yuv420p out.mp4 -y
+ffmpeg -framerate 30 -pattern_type glob -i '/home/jake/Downloads/frame-trip*.png' -c:v libx264 -pix_fmt yuv420p out-100-frames.mp4

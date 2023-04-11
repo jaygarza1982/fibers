@@ -13,23 +13,39 @@ var hueNum = 0;
 var hueInc = 0.25;
 var framesNum = 0;
 
+const graphicsStack = [];
+const maxFrames = 100;
+
+// We write to this each frame and update it
+let currentG;
+
+// TODO: Try to draw frames with little opacity then maximizing it at the end
+
 function setup() {
   frameRate(30);
   colorMode(HSB, 100);
        createCanvas(windowWidth, windowHeight);
 
-       const count = 10000;
+       const count = 1000;
        for (var i = 0; i < count; i++) {
               particles[i] = new Particle();
        }
 
        background('rgba(0, 0, 0, 1)');
 
+       currentG = createGraphics(windowWidth, windowHeight);
+       
+       // Fill stack with frames  
+       for (let i = 0; i < maxFrames; i++) {
+              const g = createGraphics(windowWidth, windowHeight);
+              g.background('rgba(0, 0, 0, 1)');
+              
+              graphicsStack.push(g);
+       }
 }
 
 function draw() { // Rotating Vectors
-      //  background('rgba(0, 0, 0, 0.25)');
-      //  background('rgba(0, 0, 0, 1)');
+       background('rgba(0, 0, 0, 1)');
        
        FlowField();
 
@@ -40,14 +56,24 @@ function draw() { // Rotating Vectors
               particles[k].follow(flowfield);
        }
 
+       // Push current graphics onto stack and remove the oldest frame
+       graphicsStack.push(currentG);
+       graphicsStack.shift();
+
        hueNum += hueInc;
        hueNum = hueNum % 360;
 
-      //  console.log('hue', hueNum);
+       // Render the stack
+       for (let i = 0; i < maxFrames; i++) {
+              image(graphicsStack[i], 0, 0);
+       }
 
-      //  save(`frame-${framesNum.toString().padStart(9, '0')}`);
+       save(`frame-trip-${framesNum.toString().padStart(9, '0')}`);
 
-      //  framesNum++;
+       framesNum++;
+
+       // Create a new graphics object we will write to
+       currentG = createGraphics(windowWidth, windowHeight);
 }
 
 function FlowField(){
@@ -112,12 +138,11 @@ function Particle() {
        this.show = function() {
               const colorStr = `hsla(${parseInt(hueNum)}, 100%, 50%, 0.25)`;
               const newColor = color(colorStr);
-              fill(newColor);
-
-              noStroke();
-              ellipse(this.pos.x, this.pos.y, 1, 1);
-
-              line(this.pos.x, this.pos.y, this.oldPos.x, this.oldPos.y);
+              
+              currentG.fill(newColor);
+              currentG.noStroke();
+              currentG.ellipse(this.pos.x, this.pos.y, 1, 1);
+              currentG.line(this.pos.x, this.pos.y, this.oldPos.x, this.oldPos.y);
        }
 
        this.edge = function() {
