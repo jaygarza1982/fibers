@@ -10,11 +10,16 @@ var particles = [];
 var flowfield;
 
 var hueNum = 0;
-var hueInc = 0.25;
+var hueInc = 2;
+// var hueInc = 0.5;
+// var hueInc = 0.25;
 var framesNum = 0;
 
 const graphicsStack = [];
 const maxFrames = 100;
+
+const WINDOW_WIDTH = 1920;
+const WINDOW_HEIGHT = 1080;
 
 // We write to this each frame and update it
 let currentG;
@@ -24,20 +29,20 @@ let currentG;
 function setup() {
   frameRate(30);
   colorMode(HSB, 100);
-       createCanvas(windowWidth, windowHeight);
+       createCanvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-       const count = 1000;
+       const count = 2000;
        for (var i = 0; i < count; i++) {
               particles[i] = new Particle();
        }
 
        background('rgba(0, 0, 0, 1)');
 
-       currentG = createGraphics(windowWidth, windowHeight);
+       currentG = createGraphics(WINDOW_WIDTH, WINDOW_HEIGHT);
        
        // Fill stack with frames  
        for (let i = 0; i < maxFrames; i++) {
-              const g = createGraphics(windowWidth, windowHeight);
+              const g = createGraphics(WINDOW_WIDTH, WINDOW_HEIGHT);
               g.background('rgba(0, 0, 0, 1)');
               
               graphicsStack.push(g);
@@ -58,7 +63,10 @@ function draw() { // Rotating Vectors
 
        // Push current graphics onto stack and remove the oldest frame
        graphicsStack.push(currentG);
-       graphicsStack.shift();
+       
+       // Stays in memory otherwise
+       let graphicsPointer = graphicsStack.shift();
+       graphicsPointer.remove();
 
        hueNum += hueInc;
        hueNum = hueNum % 360;
@@ -68,17 +76,18 @@ function draw() { // Rotating Vectors
               image(graphicsStack[i], 0, 0);
        }
 
-       save(`frame-trip-${framesNum.toString().padStart(9, '0')}`);
+       if (framesNum < 9999)
+       save(`frame-rainbow-no-mem-leak-${framesNum.toString().padStart(9, '0')}`);
 
        framesNum++;
 
        // Create a new graphics object we will write to
-       currentG = createGraphics(windowWidth, windowHeight);
+       currentG = createGraphics(WINDOW_WIDTH, WINDOW_HEIGHT);
 }
 
 function FlowField(){
-       xvec = floor((windowWidth+50) / scl);
-       yvec = floor((windowHeight+50) / scl);
+       xvec = floor((WINDOW_WIDTH+50) / scl);
+       yvec = floor((WINDOW_HEIGHT+50) / scl);
        // console.log('Creating flow field of size', xvec * yvec);
        flowfield = new Array(xvec * yvec);
 
@@ -154,5 +163,5 @@ function Particle() {
 }
 
 function windowResized() {
-       resizeCanvas(windowWidth, windowHeight);
+       resizeCanvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 }
