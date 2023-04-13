@@ -1,6 +1,6 @@
 // P5.js Code from Daniel Shiffman instructional <https://www.youtube.com/watch?v=BjoM9oKOAKY&t=542s>
 
-var scl = 5;
+var scl = 10;
 var xvec, yvec;
 // var noiseInc = 0.1;
 var noiseInc = 0.05;
@@ -16,10 +16,10 @@ var hueInc = 2;
 var framesNum = 0;
 
 const graphicsStack = [];
-const maxFrames = 100;
+const maxFrames = 50;
 
-const WINDOW_WIDTH = 1920;
-const WINDOW_HEIGHT = 1080;
+const WINDOW_WIDTH =  1920 / 1;
+const WINDOW_HEIGHT = 1080 / 1;
 
 // We write to this each frame and update it
 let currentG;
@@ -31,7 +31,7 @@ function setup() {
   colorMode(HSB, 100);
        createCanvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-       const count = 2000;
+       const count = 10000;
        for (var i = 0; i < count; i++) {
               particles[i] = new Particle();
        }
@@ -57,8 +57,12 @@ function draw() { // Rotating Vectors
        for (var k = 0; k < particles.length; k++) {
               particles[k].show();
               particles[k].update();
-              particles[k].edge();
               particles[k].follow(flowfield);
+              if (particles[k].edge()) particles[k] = new Particle();
+              // particles[k].show();
+              // particles[k].update();
+              // particles[k].edge();
+              // particles[k].follow(flowfield);
        }
 
        // Push current graphics onto stack and remove the oldest frame
@@ -76,8 +80,13 @@ function draw() { // Rotating Vectors
               image(graphicsStack[i], 0, 0);
        }
 
-       if (framesNum < 9999)
-       save(`frame-rainbow-no-mem-leak-${framesNum.toString().padStart(9, '0')}`);
+       if (framesNum > 9999) {
+              close();
+       }
+
+       const paddedHue = parseInt(hueNum).toString().padStart(3, '0');
+       const paddedFrames = framesNum.toString().padStart(9, '0');
+       save(`frame-respawn-edge-${paddedHue}-${paddedFrames}`);
 
        framesNum++;
 
@@ -121,7 +130,7 @@ function Particle() {
        this.oldPos = createVector(this.x, this.y);
        this.vel = createVector(0, 0);
        this.acc = createVector(0, 0);
-       this.r = 2.0;
+       this.r = 1;
        this.maxspeed = 1;
 
        this.update = function() {
@@ -155,10 +164,15 @@ function Particle() {
        }
 
        this.edge = function() {
-              if (this.pos.x < -this.r) this.pos.x = width + this.r;
-              if (this.pos.y < -this.r) this.pos.y = height + this.r;
-              if (this.pos.x > width + this.r) this.pos.x = -this.r;
-              if (this.pos.y > height + this.r) this.pos.y = -this.r;
+              // if (this.pos.x < -this.r) this.pos.x = width + this.r;
+              // if (this.pos.y < -this.r) this.pos.y = height + this.r;
+              // if (this.pos.x > width + this.r) this.pos.x = -this.r;
+              // if (this.pos.y > height + this.r) this.pos.y = -this.r;
+              if (this.pos.x < -this.r)         return true;
+              if (this.pos.y < -this.r)         return true;
+              if (this.pos.x > width + this.r)  return true;
+              if (this.pos.y > height + this.r) return true;
+              return false;
        }
 }
 
