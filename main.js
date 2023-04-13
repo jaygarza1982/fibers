@@ -16,7 +16,7 @@ var hueInc = 2;
 var framesNum = 0;
 
 const graphicsStack = [];
-const maxFrames = 50;
+const maxFrames = 100;
 
 const WINDOW_WIDTH =  1920 / 1;
 const WINDOW_HEIGHT = 1080 / 1;
@@ -50,8 +50,6 @@ function setup() {
 }
 
 function draw() { // Rotating Vectors
-       background('rgba(0, 0, 0, 1)');
-       
        FlowField();
 
        for (var k = 0; k < particles.length; k++) {
@@ -76,17 +74,22 @@ function draw() { // Rotating Vectors
        hueNum = hueNum % 360;
 
        // Render the stack
+       const bufferG = createGraphics(WINDOW_WIDTH, WINDOW_HEIGHT);
+       bufferG.background('rgb(0, 0, 0)');
        for (let i = 0; i < maxFrames; i++) {
-              image(graphicsStack[i], 0, 0);
+              bufferG.image(graphicsStack[i], 0, 0);
        }
 
+       image(bufferG, 0, 0);
+       
        if (framesNum > 9999) {
               close();
        }
-
+       
        const paddedHue = parseInt(hueNum).toString().padStart(3, '0');
        const paddedFrames = framesNum.toString().padStart(9, '0');
-       save(`frame-respawn-edge-${paddedHue}-${paddedFrames}`);
+       bufferG.save(`frame-respawn-edgex100-buffer-${paddedHue}-${paddedFrames}`);
+       bufferG.remove();
 
        framesNum++;
 
