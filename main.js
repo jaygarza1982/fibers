@@ -10,13 +10,13 @@ var particles = [];
 var flowfield;
 
 var hueNum = 0;
-var hueInc = 2;
+var hueInc = 1;
 // var hueInc = 0.5;
 // var hueInc = 0.25;
 var framesNum = 0;
 
 const graphicsStack = [];
-const maxFrames = 100;
+const maxFrames = 150;
 
 const WINDOW_WIDTH =  1920 / 1;
 const WINDOW_HEIGHT = 1080 / 1;
@@ -88,7 +88,7 @@ function draw() { // Rotating Vectors
        
        const paddedHue = parseInt(hueNum).toString().padStart(3, '0');
        const paddedFrames = framesNum.toString().padStart(9, '0');
-       bufferG.save(`frame-respawn-edgex100-buffer-${paddedHue}-${paddedFrames}`);
+       bufferG.save(`frame-less-time-150x-5op-${paddedHue}-${paddedFrames}`);
        bufferG.remove();
 
        framesNum++;
@@ -121,7 +121,8 @@ function FlowField(){
                     //  pop();
               }
               yNoise += noiseInc;
-              time += .00001;
+              time += (.00001 / 4);
+              // time += .00001;
               // time += .000001;
        }
 }
@@ -157,7 +158,7 @@ function Particle() {
        }
 
        this.show = function() {
-              const colorStr = `hsla(${parseInt(hueNum)}, 100%, 50%, 0.25)`;
+              const colorStr = `hsla(${parseInt(hueNum)}, 100%, 50%, 0.05)`;
               const newColor = color(colorStr);
               
               currentG.fill(newColor);
