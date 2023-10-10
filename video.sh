@@ -1,2 +1,0 @@
-# ffmpeg -framerate 30 -pattern_type glob -i '/home/jake/Downloads/frame-by-8*.png' -vf "crop=trunc(iw/2)*2:trunc(ih/2)*2" -c:v libx264 -pix_fmt yuv420p out-aaaaaa.mp4
-ffmpeg -framerate 30 -pattern_type glob -i '/home/jake/Downloads/frame-3xtime-150x-5op*.png' -c:v libx264 -pix_fmt yuv420p frame-3xtime-150x-5op.mp4
