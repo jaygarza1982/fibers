@@ -50,6 +50,7 @@ function setup() {
 }
 
 function draw() { // Rotating Vectors
+       console.log('FPS: ' + frameRate());
        FlowField();
 
        for (var k = 0; k < particles.length; k++) {
@@ -82,13 +83,13 @@ function draw() { // Rotating Vectors
 
        image(bufferG, 0, 0);
        
-       if (framesNum > 9999) {
+       if (framesNum > 20000) {
               close();
        }
        
        const paddedHue = parseInt(hueNum).toString().padStart(3, '0');
        const paddedFrames = framesNum.toString().padStart(9, '0');
-       bufferG.save(`frame-less-time-150x-5op-${paddedHue}-${paddedFrames}`);
+       // bufferG.save(`frame-3xtime-150x-5op-${paddedFrames}`);
        bufferG.remove();
 
        framesNum++;
@@ -121,7 +122,8 @@ function FlowField(){
                     //  pop();
               }
               yNoise += noiseInc;
-              time += (.00001 / 4);
+              time += (.00001 / 3);
+              // time += (.00001 / 4);
               // time += .00001;
               // time += .000001;
        }
